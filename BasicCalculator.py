@@ -11,13 +11,15 @@ When --interactive is used, the script prompts the user for operation and inputs
 """
 import argparse
 import sys
-from Functions import add, subtract, multiply, divide
+from Functions import add, subtract, multiply, divide, exponentOfNumber, factorial
 
 OPERATIONS = {
     "add": add,
     "subtract": subtract,
     "multiply": multiply,
     "divide": divide,
+    "exponent": exponentOfNumber,
+    "fact": factorial,
 }
 
 def interactive_mode() -> int:
@@ -43,31 +45,34 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Basic Calculator")
     parser.add_argument("operation", nargs="?", choices=list(OPERATIONS.keys()),
                         help="Operation to perform")
-    parser.add_argument("a", nargs="?",
-                        help="First operand (number or numeric string)")
-    parser.add_argument("b", nargs="?",
-                        help="Second operand (number or numeric string)")
-    parser.add_argument("--interactive", action="store_true",
-                        help="Run in interactive prompt mode")
+    parser.add_argument("a", nargs="?", help="First operand (number or numeric string)")
+    parser.add_argument("b", nargs="?", help="Second operand (number or numeric string)")
+    parser.add_argument("--interactive", action="store_true", help="Run in interactive prompt mode")
     args = parser.parse_args(argv)
 
     if args.interactive:
         return interactive_mode()
 
-    if args.operation is None or args.a is None or args.b is None:
+    if args.operation is None or args.a is None or (args.operation not in ["fact"] and args.b is None):
         parser.print_help()
         return 2
 
     try:
         func = OPERATIONS[args.operation]
-        print(func(args.a, args.b))
+        if args.operation == "fact":
+            print(func(args.a))
+        else:
+            print(func(args.a, args.b))
         return 0
     except ZeroDivisionError as e:
         print("Error:", e, file=sys.stderr)
         return 1
-    except Exception as e:
+    except (TypeError, ValueError) as e:
         print("Error:", e, file=sys.stderr)
         return 1
-
+    except Exception as e:
+        print("Unexpected error:", e, file=sys.stderr)
+        return 1
+    
 if __name__ == "__main__":
     raise SystemExit(main())

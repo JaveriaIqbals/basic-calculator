@@ -39,3 +39,15 @@ def divide(a: Number, b: Number) -> float:
     if b == 0:
         raise ZeroDivisionError("Cannot divide by zero")
     return a / b
+def exponentOfNumber(a: Number, b: Number) -> Number:
+    a, b = _to_number(a), _to_number(b)
+    return a ** b
+def factorial(n: Number) -> int:
+    n = _to_number(n)
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("Factorial is only defined for non-negative integers")
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
